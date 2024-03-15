@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard </title>
+    {% load static %}
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    {% block head %}
+    {% endblock %}
+</head>
+<style>
+    .search_button {
+        border: 1px solid #1F4773;
+        background-color: white;
+        color: #1F4773;
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-color: #1F4773;
+        color: 1F4773;
+    }
+
+    .search_button:hover {
+        background-color: #1F4773;
+        color: white;
+    }
+
+    .search_button_submit {
+        border: 2px solid #1F4773;
+        padding: 7px 10px;
+    }
+    .navbar-light .navbar-nav .nav-link {
+        color: #1F4773;
+    }
+    .navbar_link_color {
+        color: #1F4773;
+    }
+    .navbar_brand_title {
+        font-weight: 1000;
+        font-size: 25px;
+    }
+</style>
+
+<body>
+    <div class="main" id="main">
+        <!-- block content display -->
+        <div class="content">
+            <header style="margin-bottom: 100px;">
+                <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light shadow" style="color: #1F4773;">
+                    <a class="navbar-brand mx-5 navbar_brand_title" href="#">
+                        <h2 class=" font-italic navbar_link_color navbar_brand_title" >GH HEADLINES</h2>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+                            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+
+                
+                    <div class="collapse navbar-collapse navbar_link_color" id="navbarTogglerDemo02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item mr-3">
+                                <a class="nav-link " href="{% url 'article_filter_date' 'today' %}">TODAY </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mr-3" href="{% url 'article_filter_date' 'yesterday' %}">YESTERDAY</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mr-3" href="{% url 'article_filter_date' 'this-month' %}">THIS MONTH</a>
+                            </li>
+                            <li class="nav-item mr-3">
+                                <div class="dropdown">
+                                    <a class="nav-link link dropdown-toggle" type="button" id="SourceCollaps"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        NEWS AGENCIES
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'article_source' 'myjoyonline' %}"
+                                           style="color: #1F4773;">myjoyonline</a>
+                                        <a class="dropdown-item" href="{% url 'article_source' 'thebftonline' %}"
+                                           style="color: #1F4773;">The business and financial times</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            <!-- <li class="nav-item mr-4">
+                                <div class="dropdown">
+                                    <a class="nav-link link dropdown-toggle" type="button" id="dropdownMenuButton"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        NEWS AGENCIES
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'article_source' 'myjoyonline' %}"
+                                           style="color: #1F4773;">myjoyonline</a>
+                                        <a class="dropdown-item" href="{% url 'article_source' 'Ghana web' %}"
+                                           style="color: #1F4773;">Ghana web</a>
+                                    </div>
+                                </div>
+                            </li> -->
+                        </ul>
+                        <form method="post" class="form-inline my-2 my-lg-0" action="{% url 'article_filter' %}">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
+                            <button class="search_button my-2 my-sm-0 btn-submit" type="submit">Search</button>
+                        </form>
+                    </div>
+
+                    <div class="collapse" id="SourceCollaps">
+                        <div class="card card-body">
+                          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                        </div>
+                    </div>
+                </nav>
+                
+
+            </header>
+
+            <div class="dashboard-inner min-vh-100">
+                {% block content %} {% endblock %}
+            </div>
+
+            <footer class="footer pb-0 py-5 px-3 mt-5 " style="color: white; background-color: rgb(82, 82, 82);">
+                <div class="site-section">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md pr-md-5 mb-4 mb-md-0">
+                                <h3>About Us</h3>
+                                <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam
+                                    itaque unde facere repellendus, odio et iste voluptatum aspernatur ratione mollitia
+                                    tempora eligendi maxime est, blanditiis accusamus. Incidunt, aut, quis!</p>
+                                <ul class="list-unstyled quick-info mb-4">
+                                    <li><a href="#" class="d-flex align-items-center"><i
+                                                class="fa fa-phone text-light mr-3"></i></i> +1 291 3912 329</a></li>
+                                    <li><a href="#" class="d-flex align-items-center"><i
+                                                class="fa fa-envelope text-light mr-3"></i> info@gmail.com</a></li>
+                                </ul>
+                                <form action="#" class="subscribe form-inline">
+                                    <input type="text" class="form-control" placeholder="Enter your e-mail">
+                                    <input type="submit" class=" btn-submit search_button search_button_submit ml-3"
+                                        value="Send">
+                                </form>
+                            </div>
+                            <div class="col-md mb-4 mb-md-0">
+                                <h3>Latest Tweet</h3>
+                                <ul class="list-unstyled tweets">
+                                    <li class="d-flex">
+                                        <div class="mr-4"><i class="fa fa-twitter"></i></div>
+                                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                            veniam porro excepturi.</div>
+                                    </li>
+                                    <li class="d-flex">
+                                        <div class="mr-4"><i class="fa fa-twitter"></i></div>
+                                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                            veniam porro excepturi.</div>
+                                    </li>
+                                    <li class="d-flex">
+                                        <div class="mr-4"><i class="fa fa-twitter"></i></div>
+                                        <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                            veniam porro excepturi.</div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3 mb-4 mb-md-0">
+                                <h3>Instagram</h3>
+                                <div class="row gallery">
+                                    <div class="col-6">
+                                        <a href="#"><img src="images/img_1.jpg" alt="Image" class="img-fluid"></a>
+                                        <a href="#"><img src="images/img_2.jpg" alt="Image" class="img-fluid"></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#"><img src="images/img_3.jpg" alt="Image" class="img-fluid"></a>
+                                        <a href="#"><img src="images/img_4.jpg" alt="Image" class="img-fluid"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <div>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
