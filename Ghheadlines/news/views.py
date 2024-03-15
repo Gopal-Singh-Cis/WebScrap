@@ -11,6 +11,8 @@ from datetime import datetime
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from datetime import timedelta
+from django.shortcuts import redirect
+from django.urls import reverse
 
 class Home(View):
     def get(self,request):
@@ -70,18 +72,18 @@ def scrape_website1(request):
                 if response.status_code == 200:
                     # Parse the linked page content
                     linked_page_soup = BeautifulSoup(response.content, 'html.parser')
+                if linked_page_soup:
+                        div_tag = linked_page_soup.find('div', class_='article-meta').find('div')   
+                        article_date_str = div_tag.text.strip()
+                        article_date = datetime.strptime(article_date_str, '%d %B %Y %I:%M%p').strftime('%Y-%m-%d %H:%M:%S')
 
-                    div_tag = linked_page_soup.find('div', class_='article-meta').find('div')   
-                    article_date_str = div_tag.text.strip()
-                    article_date = datetime.strptime(article_date_str, '%d %B %Y %I:%M%p').strftime('%Y-%m-%d %H:%M:%S')
+                        img_tag = linked_page_soup.find('div', class_='img-holder').find('a').find('img')
+                        article_image = img_tag['data-src']
 
-                    img_tag = linked_page_soup.find('div', class_='img-holder').find('a').find('img')
-                    article_image = img_tag['data-src']
-
-                    for div in linked_page_soup.find_all('div', class_='article-text'): 
-                        p_tags = div.find_all('p')
-                        p_text_list = [ p_tag.text.strip() for p_tag in p_tags]
-                        article_content = ''.join(p_text_list)
+                        for div in linked_page_soup.find_all('div', class_='article-text'): 
+                            p_tags = div.find_all('p')
+                            p_text_list = [ p_tag.text.strip() for p_tag in p_tags]
+                            article_content = ''.join(p_text_list)
 
             ArticleData.objects.get_or_create(
                 title = article_title,
@@ -90,7 +92,8 @@ def scrape_website1(request):
                 content = article_content,
                 article_source = 'myjoyonline'
             )
-        return JsonResponse({'status': 'success', 'message': 'Scraping completed successfully'})
+        return redirect(reverse('article_source', args=['myjoyonline']))
+        # return render(request, 'scraping_page.html')
     
     except requests.RequestException as e:
         return JsonResponse({'status': 'error', 'message': 'Request failed: {}'.format(str(e))})
@@ -99,7 +102,7 @@ def scrape_website1(request):
         return JsonResponse({'status': 'error', 'message': 'An error occurred: {}'.format(str(e))})
 
 def scrape_website2(request):
-    try:
+    # try:
         url = 'https://thebftonline.com/'
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -112,21 +115,35 @@ def scrape_website2(request):
                 article_url = a_tag['href']
                 # Extract the title from the text content of the <a> tag
                 article_title = a_tag['title']
+                print(article_title)
                 # Optionally, follow the URL and fetch additional details  position-relative share-this-item-show img-holder 
                 response = requests.get(article_url)
                 if response.status_code == 200:
                     # Parse the linked page content
                     linked_page_soup = BeautifulSoup(response.content, 'html.parser')
 
-                    div_tag = linked_page_soup.find('div', class_='td-module-meta-info').find('time')   
-                    article_date = div_tag['datetime']
+                    # if linked_page_soup:
+                    #     div_tag = linked_page_soup.find('div', class_='td-module-meta-info').find('time')   
+                    #     article_date = div_tag['datetime']
 
-                    img_tag = linked_page_soup.find('div', class_='td-post-featured-image').find('a').find('img')
-                    article_image = img_tag['data-src']
+                    #     img_tag = linked_page_soup.find('div', class_='td-post-featured-image').find('a').find('img')
+                    #     article_image = img_tag['data-src']
 
-                    for div in linked_page_soup.find_all('div', class_='td-post-content'): 
-                        p_tags = div.find_all('p')
-                        p_text_list = [ p_tag.text.strip() for p_tag in p_tags]
+                    #     for div in linked_page_soup.find_all('div', class_='td-post-content'): 
+                    #         p_tags = div.find_all('p')
+                    #         p_text_list = [ p_tag.text.strip() for p_tag in p_tags]
+                    #         article_content = ''.join(p_text_list)
+                    if linked_page_soup:
+                        div_tag = linked_page_soup.find('div', class_='td-module-meta-info').find('time')   
+                        article_date = div_tag['datetime'] if div_tag else ''
+
+                        img_div = linked_page_soup.find('div', class_='td-post-featured-image')
+                        img_tag = img_div.find('a').find('img') if img_div else None
+                        article_image = img_tag['data-src'] if img_tag else ''
+
+                        content_div = linked_page_soup.find('div', class_='td-post-content')
+                        p_tags = content_div.find_all('p') if content_div else []
+                        p_text_list = [p_tag.text.strip() for p_tag in p_tags]
                         article_content = ''.join(p_text_list)
 
             ArticleData.objects.get_or_create(
@@ -136,10 +153,11 @@ def scrape_website2(request):
                 content = article_content,
                 article_source = 'thebftonline'
             )
-            return JsonResponse({'status': 'success', 'message': 'Scraping completed successfully'})
+        return redirect(reverse('article_source', args=['myjoyonline']))
+        
     
-    except requests.RequestException as e:
-        return JsonResponse({'status': 'error', 'message': 'Request failed: {}'.format(str(e))})
+    # except requests.RequestException as e:
+    #     return JsonResponse({'status': 'error', 'message': 'Request failed: {}'.format(str(e))})
     
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': 'An error occurred: {}'.format(str(e))})
+    # except Exception as e:
+    #     return JsonResponse({'status': 'error', 'message': 'An error occurred: {}'.format(str(e))})
